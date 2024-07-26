@@ -1,115 +1,53 @@
+
 def nextMove(player, board):
-    Empty = '_'
-    tmarker = 'O' if player == 'X' else 'X'
-    if emptyBoard(board):
-        if board[1][1] == Empty:
-            print("1 1")
-            return
-    else:
-        if searchBoard(player, board):
-            return
-        elif searchBoard(tmarker, board):
-            return
-        else:
-            if board[1][1] == Empty:
-                print("1 1")
+    def is_winner(b, p):
+        # Check rows, columns, and diagonals for a winning move
+        for i in range(3):
+            if all(b[i][j] == p for j in range(3)):  # Check row
+                return True
+            if all(b[j][i] == p for j in range(3)):  # Check column
+                return True
+        if all(b[i][i] == p for i in range(3)):      # Check main diagonal
+            return True
+        if all(b[i][2 - i] == p for i in range(3)):  # Check anti-diagonal
+            return True
+        return False
+
+    def find_winning_move(b, p):
+        for r in range(3):
+            for c in range(3):
+                if b[r][c] == '_':
+                    b[r][c] = p
+                    if is_winner(b, p):
+                        b[r][c] = '_'  # Reset the move
+                        return r, c
+                    b[r][c] = '_'  # Reset the move
+        return None
+
+    # Check for a winning move for the player
+    winning_move = find_winning_move(board, player)
+    if winning_move:
+        print(f"{winning_move[0]} {winning_move[1]}")
+        return
+
+    # Check for a winning move for the opponent and block it
+    opponent = 'O' if player == 'X' else 'X'
+    blocking_move = find_winning_move(board, opponent)
+    if blocking_move:
+        print(f"{blocking_move[0]} {blocking_move[1]}")
+        return
+
+    # Make the first available move
+    for r in range(3):
+        for c in range(3):
+            if board[r][c] == '_':
+                print(f"{r} {c}")
                 return
-            elif board[0][0] == Empty:
-                print("0 0")
-                return
-            elif board[0][2] == Empty:
-                print("0 2")
-                return
-            elif board[2][0] == Empty:
-                print("2 0")
-                return
-            elif board[2][2] == Empty:
-                print("2 2")
-                return
 
-def emptyBoard(board):
-    for row in board:
-        for cell in row:
-            if cell != '_':
-                return False
-    return True
+# Input handling
+player = input().strip()
+board = []
+for _ in range(3):
+    board.append(list(input().strip()))
 
-def searchBoard(marker, board):
-    Empty = '_'
-
-    def check_and_print(r, c):
-        print(f"{r} {c}")
-        return True
-
-    if board[1][1] == marker:
-        if board[0][1] == marker and board[2][1] == Empty:
-            return check_and_print(2, 1)
-        elif board[1][0] == marker and board[1][2] == Empty:
-            return check_and_print(1, 2)
-        elif board[1][2] == marker and board[1][0] == Empty:
-            return check_and_print(1, 0)
-        elif board[2][1] == marker and board[0][1] == Empty:
-            return check_and_print(0, 1)
-    
-    if board[0][0] == marker:
-        if board[0][1] == marker and board[0][2] == Empty:
-            return check_and_print(0, 2)
-        elif board[1][0] == marker and board[2][0] == Empty:
-            return check_and_print(2, 0)
-        elif board[1][1] == marker and board[2][2] == Empty:
-            return check_and_print(2, 2)
-        elif board[2][0] == marker and board[1][0] == Empty:
-            return check_and_print(1, 0)
-        elif board[0][2] == marker and board[0][1] == Empty:
-            return check_and_print(0, 1)
-        elif board[2][2] == marker and board[1][1] == Empty:
-            return check_and_print(1, 1)
-    
-    if board[0][2] == marker:
-        if board[0][1] == marker and board[0][0] == Empty:
-            return check_and_print(0, 0)
-        elif board[1][2] == marker and board[2][2] == Empty:
-            return check_and_print(2, 2)
-        elif board[1][1] == marker and board[2][0] == Empty:
-            return check_and_print(2, 0)
-        elif board[2][2] == marker and board[1][2] == Empty:
-            return check_and_print(1, 2)
-        elif board[0][0] == marker and board[0][1] == Empty:
-            return check_and_print(0, 1)
-        elif board[2][0] == marker and board[1][1] == Empty:
-            return check_and_print(1, 1)
-
-    if board[2][0] == marker:
-        if board[2][1] == marker and board[2][2] == Empty:
-            return check_and_print(2, 2)
-        elif board[1][0] == marker and board[0][0] == Empty:
-            return check_and_print(0, 0)
-        elif board[1][1] == marker and board[0][2] == Empty:
-            return check_and_print(0, 2)
-        elif board[0][0] == marker and board[1][0] == Empty:
-            return check_and_print(1, 0)
-        elif board[2][2] == marker and board[2][1] == Empty:
-            return check_and_print(2, 1)
-        elif board[0][2] == marker and board[1][1] == Empty:
-            return check_and_print(1, 1)
-
-    if board[2][2] == marker:
-        if board[1][1] == marker and board[0][0] == Empty:
-            return check_and_print(0, 0)
-        elif board[2][1] == marker and board[2][0] == Empty:
-            return check_and_print(2, 0)
-        elif board[1][2] == marker and board[0][2] == Empty:
-            return check_and_print(0, 2)
-        elif board[0][2] == marker and board[1][2] == Empty:
-            return check_and_print(1, 2)
-        elif board[2][0] == marker and board[2][1] == Empty:
-            return check_and_print(2, 1)
-        elif board[0][0] == marker and board[1][1] == Empty:
-            return check_and_print(1, 1)
-
-    return False
-
-if __name__ == '__main__':
-    player = input().strip()
-    board = [input().strip() for _ in range(3)]
-    nextMove(player, board)
+nextMove(player, board)
